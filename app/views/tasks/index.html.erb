@@ -1,158 +1,122 @@
 <% content_for :title, "Tasks" %>
 
-<div class="min-h-screen bg-gray-100">
-  <div class="grid grid-cols-12 min-h-screen">
+<div class="h-screen w-screen overflow-hidden bg-white">
+  <!-- เปลี่ยนจาก 4 column → 3 column -->
+  <div class="grid h-full grid-cols-[280px_1fr_420px]">
 
     <!-- Sidebar -->
-    <aside class="col-span-3 bg-white border-r border-gray-200 p-6">
-      <h2 class="text-xl font-bold mb-6">Todo App</h2>
+    <aside class="bg-white border-r border-gray-200 p-6">
+      <h2 class="text-lg font-semibold mb-6">Todo App</h2>
 
       <nav class="space-y-2">
-        <%= link_to "📥 Inbox", tasks_path, class: "block px-3 py-2 rounded-lg bg-gray-100 font-medium" %>
-        <%= link_to "📅 Today", tasks_path, class: "block px-3 py-2 rounded-lg hover:bg-gray-100" %>
-        <%= link_to "🗓 Next 7 Days", tasks_path, class: "block px-3 py-2 rounded-lg hover:bg-gray-100" %>
+        <%= link_to "📥 Inbox", tasks_path,
+          class: "block px-3 py-2 rounded-lg hover:bg-gray-100" %>
+
+        <%= link_to "📅 Today", tasks_path(filter: "today"),
+          class: "block px-3 py-2 rounded-lg hover:bg-gray-100" %>
+
+        <%= link_to "🗓 Next 7 Days", tasks_path(filter: "next7"),
+          class: "block px-3 py-2 rounded-lg hover:bg-gray-100" %>
       </nav>
 
-      <div class="mt-8">
-        <p class="text-sm font-semibold text-gray-400 mb-3">Lists</p>
-        <div class="space-y-2">
-          <%= link_to "🐱 Personal", tasks_path, class: "block px-3 py-2 rounded-lg hover:bg-gray-100" %>
-          <%= link_to "💻 Work", tasks_path, class: "block px-3 py-2 rounded-lg hover:bg-gray-100" %>
-          <%= link_to "🏠 Home", tasks_path, class: "block px-3 py-2 rounded-lg hover:bg-gray-100" %>
-        </div>
-      </div>
+      <div class="border-t border-gray-200 my-6"></div>
 
-      <div class="mt-8 border-t pt-5">
-        <%= link_to "👤 Profile", "#", class: "block px-3 py-2 rounded-lg hover:bg-gray-100" %>
-      </div>
+      <p class="text-sm font-semibold text-gray-400 mb-3">Lists</p>
+
+      <nav class="space-y-2">
+        <%= link_to "🐱 Personal", tasks_path(category: "personal"),
+          class: "block px-3 py-2 rounded-lg hover:bg-gray-100" %>
+
+        <%= link_to "💻 Work", tasks_path(category: "work"),
+          class: "block px-3 py-2 rounded-lg hover:bg-gray-100" %>
+
+        <%= link_to "🏠 Home", tasks_path(category: "home"),
+          class: "block px-3 py-2 rounded-lg hover:bg-gray-100" %>
+      </nav>
+
+      <div class="border-t border-gray-200 my-6"></div>
+
+      <%= link_to "👤 Profile", profile_path,
+        class: "block px-3 py-2 rounded-lg hover:bg-gray-100" %>
     </aside>
 
     <!-- Task List -->
-    <main class="col-span-5 bg-white border-r border-gray-200 p-6">
+    <main class="bg-white border-r border-gray-200 p-7 overflow-y-auto">
       <% if notice.present? %>
         <p class="py-2 px-3 bg-green-50 mb-5 text-green-600 font-medium rounded-md inline-block">
           <%= notice %>
         </p>
       <% end %>
 
-      <div class="flex justify-between items-center mb-6">
-        <h1 class="text-3xl font-bold">Inbox</h1>
+      <div class="flex items-center justify-between mb-6">
+        <h1 class="text-3xl font-bold">
+          <%= params[:filter] == "today" ? "Today" : params[:filter] == "next7" ? "Next 7 Days" : params[:category].present? ? params[:category].capitalize : "Inbox" %>
+        </h1>
 
         <%= link_to "+ Add task", new_task_path,
-          class: "rounded-lg px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-medium" %>
+          data: { turbo_frame: "modal" },
+          class: "px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium" %>
       </div>
 
-      <div class="space-y-3">
+      <div class="space-y-2">
         <% if @tasks.any? %>
           <% @tasks.each do |task| %>
-            <div class="group rounded-xl border border-gray-200 hover:bg-gray-50 p-4">
-              <div class="flex items-start justify-between gap-3">
-                <div>
-                  <h2 class="font-semibold text-gray-900"><%= task.title %></h2>
+            <div class="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-gray-50 border-b border-gray-100">
 
-                  <% if task.description.present? %>
-                    <p class="text-sm text-gray-500 mt-1 line-clamp-2">
-                      <%= task.description %>
-                    </p>
-                  <% end %>
-
-                  <div class="flex flex-wrap gap-2 mt-3 text-xs">
-                    <span class="px-2 py-1 rounded-md bg-gray-100 text-gray-700">
-                      <%= task.status || "pending" %>
-                    </span>
-
-                    <% if task.priority.present? %>
-                      <span class="px-2 py-1 rounded-md bg-blue-50 text-blue-700">
-                        <%= task.priority %>
-                      </span>
-                    <% end %>
-
-                    <% if task.category.present? %>
-                      <span class="px-2 py-1 rounded-md bg-orange-50 text-orange-700">
-                        <%= task.category %>
-                      </span>
-                    <% end %>
-
-                    <% if task.due_date.present? %>
-                      <span class="px-2 py-1 rounded-md bg-yellow-50 text-yellow-700">
-                        <%= task.due_date.strftime("%d %b %Y") %>
-                      </span>
-                    <% end %>
-                  </div>
-                </div>
-
-                <%= link_to "Open", task,
-                  class: "text-sm text-blue-600 hover:underline" %>
+              <div class="flex-1">
+                <div class="font-medium text-gray-800"><%= task.title %></div>
               </div>
 
-              <div class="flex flex-wrap gap-2 mt-4">
-                <% if task.may_start? %>
-                  <%= button_to "Start", start_task_path(task), method: :patch,
-                    class: "px-3 py-1.5 bg-yellow-500 hover:bg-yellow-400 text-white rounded-lg text-sm" %>
-                <% end %>
+              <% if task.due_date.present? %>
+                <span class="text-sm text-blue-600">
+                  <%= task.due_date == Date.current ? "Today" : task.due_date.strftime("%d %b") %>
+                </span>
+              <% end %>
 
-                <% if task.may_complete? %>
-                  <%= button_to "Complete", complete_task_path(task), method: :patch,
-                    class: "px-3 py-1.5 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm" %>
-                <% end %>
-
-                <% if task.may_cancel? %>
-                  <%= button_to "Cancel", cancel_task_path(task), method: :patch,
-                    class: "px-3 py-1.5 bg-gray-600 hover:bg-gray-500 text-white rounded-lg text-sm" %>
-                <% end %>
-
-                <%= link_to "Edit", edit_task_path(task),
-                  class: "px-3 py-1.5 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm" %>
-
-                <%= button_to "Delete", task, method: :delete,
-                  data: { turbo_confirm: "Are you sure?" },
-                  class: "px-3 py-1.5 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm" %>
-              </div>
+              <%= link_to "Open", task,
+                class: "text-sm text-blue-600 hover:underline" %>
             </div>
           <% end %>
         <% else %>
-          <div class="text-center py-20 text-gray-400">
-            No tasks found.
-          </div>
+          <p class="text-center text-gray-400 mt-24">No tasks found.</p>
         <% end %>
       </div>
     </main>
 
     <!-- Detail Panel -->
-    <section class="col-span-4 bg-white p-6">
+    <section class="bg-white p-7 overflow-y-auto">
       <% selected_task = @tasks.first %>
 
       <% if selected_task.present? %>
-        <div class="flex justify-between items-start">
-          <div>
-            <p class="text-sm text-blue-600 mb-2">
-              <%= selected_task.due_date || "No due date" %>
-            </p>
-            <h2 class="text-2xl font-bold"><%= selected_task.title %></h2>
+        <div class="flex justify-between items-start mb-6">
+          <div class="text-blue-600 text-sm">
+            <%= selected_task.due_date.present? ? selected_task.due_date.strftime("%b %d") : "No due date" %>
           </div>
 
           <%= link_to "Edit", edit_task_path(selected_task),
             class: "px-3 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-sm" %>
         </div>
 
-        <p class="mt-4 text-gray-600">
+        <h2 class="text-2xl font-bold mb-3"><%= selected_task.title %></h2>
+
+        <p class="text-gray-600 mb-8">
           <%= selected_task.description.presence || "No description" %>
         </p>
 
-        <div class="mt-6 space-y-3">
+        <div class="space-y-4">
           <div class="flex justify-between border-b pb-3">
-            <span class="text-gray-500">Status</span>
-            <span class="font-medium"><%= selected_task.status %></span>
+            <span>Status</span>
+            <span><%= selected_task.status %></span>
           </div>
 
           <div class="flex justify-between border-b pb-3">
-            <span class="text-gray-500">Priority</span>
-            <span class="font-medium"><%= selected_task.priority.presence || "-" %></span>
+            <span>Priority</span>
+            <span><%= selected_task.priority.presence || "-" %></span>
           </div>
 
           <div class="flex justify-between border-b pb-3">
-            <span class="text-gray-500">Category</span>
-            <span class="font-medium"><%= selected_task.category.presence || "-" %></span>
+            <span>Category</span>
+            <span><%= selected_task.category.presence || "-" %></span>
           </div>
         </div>
       <% else %>
@@ -164,3 +128,5 @@
 
   </div>
 </div>
+
+<%= turbo_frame_tag "modal" %>

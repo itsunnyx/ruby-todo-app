@@ -1,9 +1,17 @@
-<% content_for :title, "New task" %>
+<%= turbo_frame_tag "modal" do %>
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4">
+    <div class="w-full max-w-2xl rounded-2xl bg-white p-8 shadow-xl">
+      <div class="flex items-start justify-between mb-6">
+        <div>
+          <h1 class="text-2xl font-bold text-gray-900">New task</h1>
+          <p class="text-gray-500 mt-1">Create a new task</p>
+        </div>
 
-<div class="md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">New task</h1>
+        <%= link_to "✕", tasks_path,
+          class: "text-gray-400 hover:text-gray-700 text-xl" %>
+      </div>
 
-  <%= render "form", task: @task %>
-
-  <%= link_to "Back to tasks", tasks_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-</div>
+      <%= render "form", task: @task %>
+    </div>
+  </div>
+<% end %>

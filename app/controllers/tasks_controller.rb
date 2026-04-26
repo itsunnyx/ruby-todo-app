@@ -6,6 +6,14 @@ class TasksController < ApplicationController
   # GET /tasks or /tasks.json
   def index
     @tasks = Task.all
+
+    if params[:filter] == "today"
+      @tasks = @tasks.where(due_date: Date.current)
+    elsif params[:filter] == "next7"
+      @tasks = @tasks.where(due_date: Date.current..7.days.from_now.to_date)
+    elsif params[:category].present?
+      @tasks = @tasks.where(category: params[:category])
+    end
   end
 
   # GET /tasks/1 or /tasks/1.json
@@ -27,7 +35,7 @@ class TasksController < ApplicationController
 
     respond_to do |format|
       if @task.save
-        format.html { redirect_to @task, notice: "Task was successfully created." }
+        format.html { redirect_to tasks_path, notice: "Task was successfully created." }
         format.json { render :show, status: :created, location: @task }
       else
         format.html { render :new, status: :unprocessable_entity }
