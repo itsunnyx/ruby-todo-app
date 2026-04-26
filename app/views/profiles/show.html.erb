@@ -1,4 +1,53 @@
-<div>
-  <h1 class="font-bold text-4xl">Profiles#show</h1>
-  <p>Find me in app/views/profiles/show.html.erb</p>
+<% content_for :title, "Profile" %>
+
+<div class="min-h-screen bg-gray-100">
+  <div class="h-72 bg-gradient-to-r from-blue-500 via-key-400 to-cyan-300"></div>
+
+  <div class="-mt-36 flex justify-center px-6">
+    <div class="w-full max-w-4xl rounded-3xl bg-white shadow-2xl overflow-hidden">
+      <div class="relative px-8 pt-24 pb-10 text-center">
+
+        <div class="absolute -top-20 left-1/2 -translate-x-1/2">
+          
+        </div>
+
+        <h1 class="text-4xl font-bold text-gray-700">
+          Nanthawat Sittipornchaiyakhun
+        </h1>
+
+        <p class="mt-2 text-gray-500">
+          Sunny
+        </p>
+
+        <div class="mt-3 rounded-2xl p-5 text-left">
+          <p class="text-gray-600 leading-relaxed text-center">
+            ชื่อ ซัน เรียน it จากศิลปากร  สนใจทำ fullstack กับ devop  ฝากตัวด้วยคั้บบ 
+          </p>
+        </div>
+
+        <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
+          <div class="rounded-2xl bg-gray-50 p-5">
+            <p class="text-sm text-gray-400">Phone</p>
+            <p class="font-semibold">0972093703</p>
+          </div>
+
+          <div class="rounded-2xl bg-gray-50 p-5">
+            <p class="text-sm text-gray-400">Email</p>
+            <p class="font-semibold">nanthawat.sitt@gmail.com</p>
+          </div>
+        </div>
+
+        <div class="mt-8 rounded-2xl bg-gray-50 p-6">
+          <p class="text-sm text-gray-400">Quotes</p>
+          <p class="font-semibold">“วันไหนเขาทิ้ง โทรมาสองกริ๊งก็พอ”</p>
+        </div>
+
+        <div class="mt-8">
+          <%= link_to "← Back to tasks", tasks_path,
+            class: "inline-block rounded-xl bg-blue-700 px-5 py-3 text-white font-medium hover:bg-blue-500" %>
+        </div>
+
+      </div>
+    </div>
+  </div>
 </div>

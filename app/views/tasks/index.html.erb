@@ -1,7 +1,6 @@
 <% content_for :title, "Tasks" %>
 
 <div class="h-screen w-screen overflow-hidden bg-white">
-  <!-- เปลี่ยนจาก 4 column → 3 column -->
   <div class="grid h-full grid-cols-[280px_1fr_420px]">
 
     <!-- Sidebar -->
@@ -62,9 +61,24 @@
         <% if @tasks.any? %>
           <% @tasks.each do |task| %>
             <div class="flex items-center gap-3 px-3 py-3 rounded-lg hover:bg-gray-50 border-b border-gray-100">
+              <div class="w-5 h-5 rounded border-2 border-gray-300"></div>
 
               <div class="flex-1">
                 <div class="font-medium text-gray-800"><%= task.title %></div>
+
+                <div class="mt-1 flex gap-2 text-xs text-gray-400">
+                  <% if task.status.present? %>
+                    <span><%= task.status %></span>
+                  <% end %>
+
+                  <% if task.priority.present? %>
+                    <span>• <%= task.priority %></span>
+                  <% end %>
+
+                  <% if task.category.present? %>
+                    <span>• <%= task.category %></span>
+                  <% end %>
+                </div>
               </div>
 
               <% if task.due_date.present? %>
@@ -73,7 +87,7 @@
                 </span>
               <% end %>
 
-              <%= link_to "Open", task,
+              <%= link_to "Open", tasks_path(request.query_parameters.merge(selected_id: task.id)),
                 class: "text-sm text-blue-600 hover:underline" %>
             </div>
           <% end %>
@@ -85,7 +99,7 @@
 
     <!-- Detail Panel -->
     <section class="bg-white p-7 overflow-y-auto">
-      <% selected_task = @tasks.first %>
+      <% selected_task = params[:selected_id].present? ? Task.find_by(id: params[:selected_id]) : @tasks.first %>
 
       <% if selected_task.present? %>
         <div class="flex justify-between items-start mb-6">
@@ -118,6 +132,31 @@
             <span>Category</span>
             <span><%= selected_task.category.presence || "-" %></span>
           </div>
+        </div>
+
+        <div class="mt-8 flex flex-wrap gap-2">
+          <% if selected_task.may_start? %>
+            <%= button_to "Start", start_task_path(selected_task),
+              method: :patch,
+              class: "px-3 py-2 bg-yellow-500 hover:bg-yellow-400 text-white rounded-lg text-sm" %>
+          <% end %>
+
+          <% if selected_task.may_complete? %>
+            <%= button_to "Complete", complete_task_path(selected_task),
+              method: :patch,
+              class: "px-3 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm" %>
+          <% end %>
+
+          <% if selected_task.may_cancel? %>
+            <%= button_to "Cancel", cancel_task_path(selected_task),
+              method: :patch,
+              class: "px-3 py-2 bg-gray-600 hover:bg-gray-500 text-white rounded-lg text-sm" %>
+          <% end %>
+
+          <%= button_to "Delete", selected_task,
+            method: :delete,
+            data: { turbo_confirm: "Are you sure?" },
+            class: "px-3 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm" %>
         </div>
       <% else %>
         <div class="h-full flex items-center justify-center text-gray-400">
