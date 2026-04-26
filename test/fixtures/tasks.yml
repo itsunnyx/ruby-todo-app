@@ -1,0 +1,31 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+# == Schema Information
+#
+# Table name: tasks
+#
+#  id          :bigint           not null, primary key
+#  category    :string
+#  description :text
+#  due_date    :date
+#  priority    :string
+#  status      :string
+#  title       :string
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
+one:
+  title: MyString
+  description: MyText
+  status: MyString
+  due_date: 2026-04-26
+  priority: MyString
+  category: MyString
+
+two:
+  title: MyString
+  description: MyText
+  status: MyString
+  due_date: 2026-04-26
+  priority: MyString
+  category: MyString
