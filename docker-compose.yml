@@ -1,0 +1,54 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: ["bash", "-lc", "./bin/rails db:prepare && ./bin/rails server -b 0.0.0.0 -p 3000"]
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/rails
+      - bundle:/usr/local/bundle
+    stdin_open: true
+    tty: true
+    environment:
+      RAILS_ENV: development
+      DATABASE_URL: postgresql://todo_app:todo_app@db:5432/todo_app_development
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: todo_app_development
+      POSTGRES_USER: todo_app
+      POSTGRES_PASSWORD: todo_app
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U todo_app -d todo_app_development"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:8.14
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@todoapp.local
+      PGADMIN_DEFAULT_PASSWORD: admin1234
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  bundle:
+  pgadmin_data:
